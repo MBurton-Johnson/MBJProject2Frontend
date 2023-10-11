@@ -17,9 +17,10 @@
     </div>
 
   </div>
+  <button @click="addToLibrary">Add to Library</button>
   </template>
   
-  <script>
+  <script> 
   import axios from 'axios';
   import NavBar from '@/components/NavBar.vue';
   
@@ -28,7 +29,8 @@
     data() {
       return {
         podcast: null,
-        error: null
+        error: null,
+        userEmail: ''
       };
     },
     components: {
@@ -68,13 +70,48 @@
           this.error = 'An error occurred!';
           console.error(error);
         }
+      },
+      async addToLibrary() {
+        try {
+
+            const userSession = this.$cookies.get('user_session');
+            
+            // Log the userSession to the console
+            console.log('User Session:', userSession);
+
+            if (userSession) {
+                // Decode the payload of the JWT
+                const base64Url = userSession.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const payload = JSON.parse(atob(base64));
+
+                // Log the payload to the console
+                console.log('Decoded Payload:', payload);
+
+                // Extract userEmail from the payloadaddadd
+                this.userEmail = payload.email;
+
+
+            }
+            const response = await axios.post('http://localhost:4000/podcast/add', this.podcast);            
+            console.log('Response:', response);
+              alert('Podcast added to library!');
+
+          const podcastUuid = this.podcast.uuid;
+          await axios.post('http://localhost:4000/user/addPodcast', { userEmail: this.userEmail, podcastUuid });
+        } catch (error) {
+            console.error('Error adding podcast to library:', error);
+            alert('Failed to add podcast to library.');
+        }
       }
     },
-    mounted() {
-        console.log('Podcast ID:', this.uuid); // Log the podcast ID
-      this.fetchPodcast();
+
+      mounted() {
+        console.log("UUID:", this.uuid);
+        this.fetchPodcast();
+}
     }
-  }
+
   </script>
 
 <style scoped>
@@ -83,3 +120,65 @@
     height: 100px;
   }
   </style>
+
+  //       addToLibrary() {
+//     // Retrieve user credentials securely
+//     const userSession = this.$cookies.get('user_session');
+    
+//     // Log the userSession to the console
+//     console.log('User Session:', userSession);
+
+//     if (userSession) {
+//         // Decode the payload of the JWT
+//         const base64Url = userSession.split('.')[1];
+//         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+//         const payload = JSON.parse(atob(base64));
+
+//         // Log the payload to the console
+//         console.log('Decoded Payload:', payload);
+
+//         // Extract userEmail from the payloadaddadd
+//         const userEmail = payload.email;
+
+//         // Additional check to ensure userEmail is defined
+//         if (!userEmail) {
+//             console.error('Email is not defined in the token payload!');
+//             return;
+//         }
+
+//         // Send a request to add the podcast to the user's library
+//         fetch('http://localhost:4000/user/addPodcast', {
+//             method: 'POST',
+//             headers: { "Content-Type": 'application/json' },
+//             body: JSON.stringify({ userEmail, podcastUuid: this.uuid })
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             console.log('Podcast added:', data);
+//             this.$router.push('/user');
+//         })
+//         .catch(error => console.error('Error:', error));
+//     } else {
+//         alert('You need to be logged in to add podcasts to your library.');
+//         this.$router.push('/login');
+//     }
+// }
+
+
+// },
+//     async mounted() {
+//   // if (!this.userId) {
+//   //   console.error('UserId is null!');
+//   //   return;
+//   // }
+//   try {
+//     const response = await axios.get(`http://localhost:4000/user/${this.userId}/podcasts`);
+//     console.log('Podcasts response:', response.data);
+//   } catch (error) {
+//     console.error('Error fetching podcasts:', error);
+//   }
+//   console.log('Podcast ID:', this.uuid); // Log the podcast ID
+//   this.fetchPodcast();
+// }
+
+  // }

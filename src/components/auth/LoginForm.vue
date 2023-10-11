@@ -11,6 +11,7 @@
 
 <script>
 import { decodeCredential, googleLogout } from 'vue3-google-login'
+import { useRouter } from 'vue-router';
 
 export default {
     name: "LoginForm",
@@ -26,6 +27,17 @@ export default {
             this.userName = userData.given_name
         } 
     },
+    setup() {
+        const router = useRouter(); // Use router instance
+
+        const navigateToHome = () => {
+            router.push('/homepage'); // Navigate to the homepage
+        };
+
+        return {
+            navigateToHome, // Expose the method to template
+        };
+    },
     methods: {
         callback: function (response) {
             this.isLoggedIn = true
@@ -33,6 +45,7 @@ export default {
             console.log(userData);
             this.userName = userData.given_name
             this.$cookies.set('user_session', response.credential);
+
             fetch('http://localhost:4000/user/login', {
                 method: 'POST',
                 headers: {
@@ -51,6 +64,7 @@ export default {
             })
             .then((data) => {
                 console.log('Session saved', data);
+                this.navigateToHome();
             })
             .catch((error) => {
                 console.error('Fetching failed: ', error.message);
