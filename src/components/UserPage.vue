@@ -11,7 +11,7 @@
       <div v-for="podcast in podcasts" :key="podcast.uuid">
         <h2>{{ podcast.name }}</h2>
         <img :src="podcast.imageUrl" alt="Podcast Image" class="podcast-img">
-        <p>{{ podcast.description }}</p>
+
       </div>
     </div>
 
