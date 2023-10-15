@@ -5,6 +5,8 @@ import UserPage from '../components/UserPage'
 import PodcastDetail from '../components/PodcastDetail'
 import PodcastSearch from '../components/PodcastSearch'
 import LoginForm from '../components/auth/LoginForm'
+import UserReviews from '../components/UserReviews'
+import EditReview from '../components/EditReview'
 
 const routes = [
     {
@@ -38,7 +40,16 @@ const routes = [
         path: '/login',
         component: LoginForm
     },
-    
+    {
+        name: 'UserReviews',
+        path: '/user-reviews',
+        component: UserReviews
+    },
+    {
+        name: 'EditReview',
+        path: '/edit-review',
+        component: EditReview
+    },
 
 ]
 

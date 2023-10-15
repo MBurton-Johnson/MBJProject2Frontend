@@ -1,13 +1,16 @@
+
 <template>
-    <h1>Login page</h1>
-    <div v-if="isLoggedIn">
-        <h2>Hello {{ userName }}</h2>
-        <button class="btn btn-primary" @click="handleLogOut">Log Out</button>
+    <div class="login-page">
+      <div class="brand">Good<span class="accent-text">Listens</span></div>
+      <div class="login-container">
+        <h2 class="login-heading">Sign In</h2>
+        <div class="login-box">
+            <GoogleLogin :callback="callback" />
+        </div>
+      </div>
     </div>
-    <div v-else>
-        <GoogleLogin :callback="callback" />
-    </div>
-</template>
+  </template>
+  
 
 <script>
 import { decodeCredential, googleLogout } from 'vue3-google-login'
@@ -78,3 +81,55 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.login-page {
+    background-color: #4CAF50;  /* Green background */
+    height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 5%;  /* Adjusted space from top */
+}
+
+.brand {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 3rem;
+    color: white;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+}
+
+.accent-text {
+    font-weight: bold;
+    color: #004d00;  /* dark dark green */
+}
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-heading {
+    color: black;
+    font-size: 1.5rem;
+    margin-bottom: 1rem; /* Space between heading and box */
+}
+
+.login-box {
+    background-color: white;
+    padding: 3rem;  /* Bigger padding for larger box */
+    border-radius: 10px; /* Rounded corners */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Add styling for your login content if needed */
+</style>
