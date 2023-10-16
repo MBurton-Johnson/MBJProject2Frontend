@@ -213,6 +213,21 @@ convertRatingToStars(rating) {
 
 <style scoped>
 .router-link-button {
+  /* Remove the background color from here */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+/* Apply the background color to the button element */
+.router-link-button button {
   background-color: #4CAF50; /* Green */
   border: none;
   color: white;
@@ -225,6 +240,13 @@ convertRatingToStars(rating) {
   transition-duration: 0.4s;
   cursor: pointer;
 }
+
+.router-link-button:hover {
+  background-color: white;
+  color: black;
+  border: 1px solid #4CAF50;
+}
+
 
 .router-link-button:hover {
   background-color: white;
