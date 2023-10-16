@@ -1,6 +1,8 @@
 <template>
   <nav>
-    <div class="brand">GoodListens</div>
+    <div class="brand">
+      Good<span class="accent-text">Listens</span>
+    </div>
     <div class="nav-links">
       <router-link to="/homepage" class="nav-link">Home</router-link>
       <router-link to="/about" class="nav-link">About</router-link>
@@ -41,6 +43,15 @@
     
     
     <style scoped>
+    body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+#app, nav {
+  width: 100%;
+}
 nav {
   background-color: green;
   padding: 1rem;
@@ -50,9 +61,14 @@ nav {
 }
 
 .brand {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.5rem;
-  color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem; /* Adjust according to navbar */
+    color: white;
+}
+
+.accent-text {
+    font-weight: bold;
+    color: #004d00; /* dark dark green */
 }
 
 .nav-links {

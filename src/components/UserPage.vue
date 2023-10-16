@@ -1,30 +1,55 @@
 <template>
-    <div id="app">
-        <NavBar />
+<div id="app">
+    <NavBar />
     <router-view />
-  </div>
-  <div v-if="error">
-      <p>{{ error }}</p>
-    </div>
-    
-    <div v-else>
-      <div v-for="podcast in podcasts" :key="podcast.uuid">
-    <h2>{{ podcast.name }} <button @click="deletePodcast(podcast.uuid)">Remove</button></h2>
-    <img :src="podcast.imageUrl" alt="Podcast Image" class="podcast-img">
-    <router-link :to="{ name: 'UserReviews', params: { podcastUuid: podcast.uuid } }">
-        Add Review
-    </router-link>
-        <p v-if="podcast.userReview">
-      Your Review: {{ podcast.userReview.rating }} - {{ podcast.userReview.description }}
-      <button @click="deleteReview(podcast.uuid)">Delete Review</button>
-      <button @click="editReview(podcast.uuid, podcast.userReview)">Edit Review</button>
-    </p>
-    <p v-else>You haven't reviewed this podcast yet.</p>
-</div>
-
+    <div class="podcasts-wrapper">
+      <div class="podcast-headers">
+        <h3>Cover</h3>
+        <h3>Title</h3>
+        <h3>Score</h3>
+        <h3>Review</h3>
+        <h3>Actions</h3>
       </div>
+      <div class="podcast-container" v-for="podcast in podcasts" :key="podcast.uuid">
+    <img :src="podcast.imageUrl" alt="Podcast Image" class="podcast-img">
+    <h2>{{ podcast.name }}</h2>
+    <p v-if="podcast.userReview">
+  {{ convertRatingToStars(podcast.userReview.rating) }}
+</p>
+      <p v-else>&nbsp;</p> 
+      <p v-if="podcast.userReview">
+       {{ podcast.userReview.description }}
+        </p>
+        <p v-else>&nbsp;</p>
+        <div class="button-container">
+        <router-link 
+            v-if="!podcast.userReview"
+            :to="{ name: 'UserReviews', params: { podcastUuid: podcast.uuid } }" 
+            tag="button" 
+            class="router-link-button"
+        >
+            Add Review
+        </router-link>
+        <button v-if="podcast.userReview" @click="deleteReview(podcast.uuid)">Delete Review</button>
+        <button v-if="podcast.userReview" @click="editReview(podcast.uuid, podcast.userReview)">Edit Review</button>
+    </div>
+    <button class="remove-podcast-button" @click="deletePodcast(podcast.uuid)">X<span class="tooltip-text">Remove Podcast</span></button>
+</div>
+    <div v-if="error" class="error-message">
+      <p>{{ error }}</p>
+      </div>
+    </div>
+</div>
+<div v-if="showDeleteConfirmationModal" class="modal">
+    <div class="modal-content">
+      <p>Are you sure you want to delete this podcast?</p>
+      <button @click="confirmDelete">Yes</button>
+      <button @click="cancelDelete">No</button>
+    </div>
+  </div>
 
 </template>
+
 
 <script>
 import NavBar from '@/components/NavBar.vue';
@@ -35,7 +60,9 @@ name: 'UserPage',
 data: () => ({ 
         error: '',
         userEmail: '',
-        podcasts: []
+        podcasts: [],
+        showDeleteConfirmationModal: false,
+        podcastToDelete: null,
     }),
 
     components: {
@@ -100,7 +127,14 @@ data: () => ({
                 }
               },
 
-    async deletePodcast(podcastUuid) {
+    deletePodcast(podcastUuid) {
+    this.podcastToDelete = podcastUuid;
+    this.showDeleteConfirmationModal = true;
+    },
+
+    // New methods for confirming and canceling deletion
+    async confirmDelete() {
+      // Note: Moved the deletion logic here from `deletePodcast` method
       try {
         const userSession = this.$cookies.get('user_session');
         let userEmail = '';
@@ -109,16 +143,27 @@ data: () => ({
             userEmail = payload.email;
         }
 
-        // Sending delete request to API
-        await axios.delete('http://localhost:4000/user/deletePodcast', { data: { userEmail, podcastUuid } });
-        
-        // Removing the podcast from local data
-        this.podcasts = this.podcasts.filter(podcast => podcast.uuid !== podcastUuid);
+        await axios.delete('http://localhost:4000/user/deletePodcast', { 
+          data: { userEmail, podcastUuid: this.podcastToDelete } 
+        });
+
+        this.podcasts = this.podcasts.filter(
+          podcast => podcast.uuid !== this.podcastToDelete
+        );
       } catch (error) {
         console.error('Error deleting podcast:', error);
         this.error = 'Failed to delete podcast.';
+      } finally {
+        // Regardless of the outcome, close the modal and reset `podcastToDelete`
+        this.showDeleteConfirmationModal = false;
+        this.podcastToDelete = null;
       }
     },
+    cancelDelete() {
+      this.showDeleteConfirmationModal = false;
+      this.podcastToDelete = null;
+    },
+
     async deleteReview(podcastUuid) {
     try {
       const userSession = this.$cookies.get('user_session');
@@ -146,7 +191,20 @@ data: () => ({
     return;
   }
   this.$router.push({ name: 'EditReview', params: { podcastUuid, userReview } });
-}},
+},
+convertRatingToStars(rating) {
+    const fullStar = '\u2605';
+    const emptyStar = '\u2606';
+    const maxStars = 5;
+
+    const fullStars = fullStar.repeat(rating);
+    const emptyStars = emptyStar.repeat(maxStars - rating);
+
+    return fullStars + emptyStars;
+  },
+
+},
+
   mounted() {
     this.fetchPodcasts();
   },
@@ -155,12 +213,172 @@ data: () => ({
 </script>
 
 <style scoped>
-#app {
-    margin-top: 0;
+.router-link-button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
 }
+
+.router-link-button:hover {
+  background-color: white;
+  color: black;
+  border: 1px solid #4CAF50;
+}
+
+#app {
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.podcasts-wrapper {
+  width: 75%; 
+}
+
+.podcast-headers,
+.podcast-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.podcast-container img,
+.podcast-container h2,
+.podcast-container p {
+    margin: 0;
+    padding: 0;
+}
+
+.podcast-headers h3,
+.podcast-container img,
+.podcast-container h2,
+.podcast-container p {
+    width: 20%; 
+}
+
+.podcast-headers h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+.remove-podcast-button {
+  position: absolute;  
+  right: -110px;
+  background-color: #e44d25;
+  border: none;
+  color: white;
+  padding: 5px 10px; 
+  font-size: 12px;   
+  cursor: pointer;
+  transition-duration: 0.4s;
+  display: inline-block;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px;
+  border-radius: 3px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Place it above the button */
+  left: 50%;
+  margin-left: -60px; /* Shift it left by half its width */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.remove-podcast-button:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.remove-podcast-button:hover {
+    background-color: white;
+    color: #e44d25;
+    border: 1px solid #e44d25;
+}
+
+.podcast-container:nth-child(1) .remove-podcast-button {
+    top: 20px;  /* Lower the button to avoid the headers */
+}
+
+.podcast-container + .podcast-container {
+    margin-top: 50px;  
+}
+.podcast-headers h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
 .podcast-img {
-  width: 150px;
-  height: 150px;
+  max-width: 150px;
+  height: auto;
+  object-fit: cover; 
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+}
+
+.error-message {
+  color: red;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+podcast-container p {
+  color: gold;
+  font-size: 1.5em;
 }
 </style>
+
+
 

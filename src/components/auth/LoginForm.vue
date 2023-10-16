@@ -117,7 +117,7 @@ export default {
 
 .login-heading {
     color: black;
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     margin-bottom: 1rem; /* Space between heading and box */
 }
 
