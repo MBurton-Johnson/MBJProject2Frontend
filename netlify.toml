@@ -6,3 +6,6 @@
   to = "/index.html"
 
   status = 200
+
+  [functions]
+  directory = "my_functions"
