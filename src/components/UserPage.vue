@@ -22,14 +22,13 @@
         </p>
         <p v-else>&nbsp;</p>
         <div class="button-container">
-        <router-link 
-            v-if="!podcast.userReview"
-            :to="{ name: 'UserReviews', params: { podcastUuid: podcast.uuid } }" 
-            tag="button" 
-            class="router-link-button"
-        >
-            Add Review
-        </router-link>
+          <router-link 
+    v-if="!podcast.userReview"
+    :to="{ name: 'UserReviews', params: { podcastUuid: podcast.uuid } }" 
+    class="router-link-button"
+>
+    <button>Add Review</button>
+</router-link>
         <button v-if="podcast.userReview" @click="deleteReview(podcast.uuid)">Delete Review</button>
         <button v-if="podcast.userReview" @click="editReview(podcast.uuid, podcast.userReview)">Edit Review</button>
     </div>
