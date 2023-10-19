@@ -103,6 +103,7 @@ export default {
         }
 
         // Fetch podcasts
+        console.log(process.env.VUE_APP_BACKEND_API);
         const response = await axios.post(
           `${process.env.VUE_APP_BACKEND_API}/user/podcasts`,
           { userEmail: this.userEmail }
