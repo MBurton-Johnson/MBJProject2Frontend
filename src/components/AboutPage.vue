@@ -14,6 +14,8 @@ Our platform is designed with you in mind. Whether you're a seasoned <span class
 But we're more than just a directory. We believe in the power of community, which is why we encourage you to share your thoughts, opinions, and reviews. Your voice matters, and your insights can help others find their next obsession.
 
 Join us on this exciting <span class="podcast">podcasting</span> adventure. <span>GoodListens</span> is your trusted companion in the world of <span class="podcast">podcasts</span>, and we can't wait to embark on this sonic journey together. Happy listening!</p>
+<img src="@/assets/podcast.jpeg" alt="podcast-2" class="about-image" />
+
 </div>
 </div>
 </template>
@@ -22,7 +24,7 @@ Join us on this exciting <span class="podcast">podcasting</span> adventure. <spa
 import NavBar from '@/components/NavBar.vue';
 
 
-export default { // the name of your component
+export default {
 name: 'AboutPage',
 data: () => ({ 
         error: '',
@@ -67,6 +69,14 @@ p {
     color: orangered;
     font-weight: bolder;
 }
+
+.about-image {
+    max-width: 100%; 
+    display: block; 
+    margin: 20px auto;
+    padding-top: 40px; 
+    
+  }
 </style>
 
 
