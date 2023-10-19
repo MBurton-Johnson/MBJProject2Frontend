@@ -104,7 +104,7 @@ export default {
 
         // Fetch podcasts
         const response = await axios.post(
-          `${process.env.VUE_APP_BACKEND_API}/api/user/podcasts`,
+          `${process.env.VUE_APP_BACKEND_API}/user/podcasts`,
           { userEmail: this.userEmail }
         );
         this.podcasts = response.data.podcasts;
@@ -115,7 +115,7 @@ export default {
             this.podcasts.map(async (podcast) => {
               try {
                 const reviewResponse = await axios.post(
-                  `${process.env.VUE_APP_BACKEND_API}/api/review/user`,
+                  `${process.env.VUE_APP_BACKEND_API}/review/user`,
                   {
                     userEmail: this.userEmail,
                     podcastUuid: podcast.uuid,
@@ -189,7 +189,7 @@ export default {
           userEmail = payload.email;
         }
 
-        await axios.delete(`${process.env.VUE_APP_BACKEND_API}/api/user/deletePodcast`, {
+        await axios.delete(`${process.env.VUE_APP_BACKEND_API}/user/deletePodcast`, {
           data: { userEmail, podcastUuid: this.podcastToDelete },
         });
 
@@ -220,7 +220,7 @@ export default {
         }
 
         // Sending delete request to API
-        await axios.delete(`${process.env.VUE_APP_BACKEND_API}/api/reviw/delete`, {
+        await axios.delete(`${process.env.VUE_APP_BACKEND_API}/reviw/delete`, {
           data: { userEmail, podcastUuid },
         });
 
