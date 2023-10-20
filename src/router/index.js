@@ -10,6 +10,11 @@ import EditReview from '../components/EditReview'
 
 const routes = [
     {
+        name: 'LoginForm',
+        path: '/login',
+        component: LoginForm
+    },
+    {
         name: 'HomePage', 
         path: '/homepage',
         component: HomePage
@@ -34,11 +39,6 @@ const routes = [
         path: '/podcast/:uuid',
         component: PodcastDetail,
         props: true
-    },
-    {
-        name: 'LoginForm',
-        path: '/',
-        component: LoginForm
     },
     {
         name: 'UserReviews',
