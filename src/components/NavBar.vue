@@ -33,7 +33,7 @@ export default {
       this.$cookies.remove("user_session");
       this.isLoggedIn = false;
       // Maybe redirect to the homepage or login page after logout?
-      this.$router.push("/login");
+      this.$router.push({name:"LoginForm"});
     },
   },
 };

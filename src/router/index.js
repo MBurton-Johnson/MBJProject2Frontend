@@ -11,7 +11,7 @@ import EditReview from '../components/EditReview'
 const routes = [
     {
         name: 'LoginForm',
-        path: '/login',
+        path: '/',
         component: LoginForm
     },
     {
